@@ -1,0 +1,19 @@
+{
+    "builders": [
+        {
+            "type": "googlecompute",
+            "vault_gcp_oauth_engine": "gcp/token/my-token-roleset",
+            "project_id": "crucial-media-360523",
+            "source_image": "debian-10-buster-v20200413",
+            "network": "default",
+            "ssh_username": "packer",
+            "zone": "us-central1-a"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": ["touch /tmp/gk.log"]
+        }
+    ]
+}
