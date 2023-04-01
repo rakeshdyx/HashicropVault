@@ -84,4 +84,31 @@ vault read gcp/roleset/my-token-roleset
 ```
 Reference URL -  https://developer.hashicorp.com/vault/docs/secrets/gcp
 
-### Configure 
+## Deploy a Packer image using the role set.
+
+1. Create a packer file `packer-auth.json` in Vault server. 
+```
+{
+    "builders": [
+        {
+            "type": "googlecompute",
+            "vault_gcp_oauth_engine": "gcp/token/my-token-roleset",
+            "project_id": "crucial-media-360523",
+            "source_image": "debian-10-buster-v20200413",
+            "network": "default",
+            "ssh_username": "packer",
+            "zone": "us-central1-a"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": ["touch /tmp/gk.log"]
+        }
+    ]
+}
+```
+2. Execute below command to deploy the packer image.
+```
+packer build packer-auth.json
+```
