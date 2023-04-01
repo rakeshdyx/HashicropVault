@@ -51,15 +51,37 @@ sys/          system       system_96ba5c20       system endpoints used for contr
 ServiceAccountAdmin
 ServiceAccountKeyAdmin
 ServiceAccountTokenCreator
+Security Admin
+Security Reviewer
 ``` 
-4. Create a Service Account key and download the json file.
+4. Create a Service Account key and download the json file and enable below APIs in Google Cloud API services.
+```
+iam.googleapis.com
+cloudresourcemanager.googleapis.com
+```
 5. Go to the vault server and copy the SA key to ur working directory.
 6. Now configure the secrets engine with account credential using command below.
 
 ```
 vault write gcp/config credentials=@sa-key.json
 ```
+7. Configure a roleset that generate a OAuth2 Access token.
+```
+vault write gcp/roleset/my-token-roleset \
+project="crucial-media-360523" \
+secret_type="access_token"  \
+token_scopes="https://www.googleapis.com/auth/cloud-platform" \
+bindings=-<<EOF
+resource "//cloudresourcemanager.googleapis.com/projects/crucial-media-360523" {
+roles = ["roles/compute.instanceAdmin.v1","roles/iam.serviceAccountUser"]
+}
+EOF
+```
+8. Execute command below command to read the newly create role set.
 
+```
+vault read gcp/roleset/my-token-roleset
+```
 Reference URL -  https://developer.hashicorp.com/vault/docs/secrets/gcp
 
 ### Configure 
